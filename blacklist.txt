@@ -1,0 +1,4 @@
+blacklist
+more
+swear
+words
