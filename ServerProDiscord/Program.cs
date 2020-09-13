@@ -18,11 +18,14 @@ namespace ServerProDiscord
             _client = new DiscordSocketClient();
             _client.Log += Log;
             _client.MessageReceived += BlackList.DeleteBlackList;
+            _client.MessageReceived += Embed.CheckEmbed;
 
-            string token = System.IO.File.ReadAllText(TokenPath);
+            Token = System.IO.File.ReadAllText(_tokenPath);
             BlackList._blackList = System.IO.File.ReadLines(BlackList.BlackListPath).ToList();
 
-            await _client.LoginAsync(TokenType.Bot, token);
+            Prefix = System.IO.File.ReadAllText(_prefixPath);
+
+            await _client.LoginAsync(TokenType.Bot, Token);
             await _client.StartAsync();
             
 
@@ -35,7 +38,9 @@ namespace ServerProDiscord
         }
 
 
-
-        static readonly string TokenPath = "../../../../.token";
+        public static string Prefix = "!";
+        private const string _prefixPath = "../../../../prefix.txt";
+        public static string Token = "";
+        private const string _tokenPath = "../../../../token.txt";
     }
 }
