@@ -11,11 +11,10 @@ namespace ServerProDiscord
     {
         public async static Task CheckEmbed(SocketMessage msg)
         {
-            if (msg.Content.StartsWith($"{Program.Prefix}embed"))
-            {
-                Console.WriteLine("Embed command found");
-                await CheckValid(msg);
-            }
+            if (!msg.Content.StartsWith($"{Program.Config["Prefix"]}embed")) return;
+
+            await CheckValid(msg);
+            
         }
 
         private async static Task CheckValid(SocketMessage msg)
@@ -67,23 +66,12 @@ namespace ServerProDiscord
 
             embed = embed.Substring(0, lastIndex - 2);
 
-            await SendEmbed(msg, embed);
+            await Program.SendCustom(msg.Channel.Id, embed);
         }
 
         private async static Task SendInvalidFormat(SocketMessage msg)
         {
             await msg.Channel.SendMessageAsync(_invalidFormatMsg);
-        }
-
-        private async static Task SendEmbed(SocketMessage msg, string embed)
-        {
-            HttpClient client = new HttpClient();
-            var content = new StringContent(embed, Encoding.UTF8, "application/json");
-            client.DefaultRequestHeaders.Add("Authorization", "Bot " + Program.Token);
-            Console.WriteLine($"Sending:\n {embed}");
-            var response = client.PostAsync($"https://discord.com/api/channels/{msg.Channel.Id}/messages", content);
-            Console.WriteLine(response.Result.StatusCode.ToString());
-            await Task.Delay(0);
         }
 
         private const string _invalidFormatMsg = "Invalid code block.";
