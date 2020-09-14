@@ -11,6 +11,8 @@ namespace ServerProDiscord
     {
         private HttpClient _client;
 
+        private const string _invalidCustomMsg = "Invalid code block.";
+
         public MessageHandler(string token)
         {
             _client = new HttpClient();
@@ -33,6 +35,7 @@ namespace ServerProDiscord
             if (_response.Result.StatusCode.ToString() != "OK") Console.WriteLine(_response.Result.StatusCode);
         }
 
+        #region SendCustom Command
         public async Task CheckBlock(SocketMessage msg)
         {
             int index = msg.Content.IndexOf("`");
@@ -87,9 +90,8 @@ namespace ServerProDiscord
 
         private async Task SendInvalidFormat(SocketMessage msg)
         {
-            await msg.Channel.SendMessageAsync(_invalidFormatMsg);
+            await msg.Channel.SendMessageAsync(_invalidCustomMsg);
         }
-
-        private const string _invalidFormatMsg = "Invalid code block.";
+        #endregion
     }
 }

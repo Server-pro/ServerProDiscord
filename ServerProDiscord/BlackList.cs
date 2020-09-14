@@ -9,12 +9,9 @@ namespace ServerProDiscord
 {
     class BlackList
     {
-        List<string> _list;
+        private List<string> _list;
 
-        public BlackList(string path)
-        {
-            _list = System.IO.File.ReadLines(path).ToList();
-        }
+        public BlackList(string path) => _list = System.IO.File.ReadLines(path).ToList();
 
         public async Task Check(SocketMessage msg)
         {

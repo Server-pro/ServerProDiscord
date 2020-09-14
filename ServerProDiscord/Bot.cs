@@ -13,11 +13,45 @@ namespace ServerProDiscord
 {
     public class Bot
     {
-        static void Main() => new Bot().MainAsync().GetAwaiter().GetResult();
+        private static void Main() => new Bot().MainAsync().GetAwaiter().GetResult();
 
         private DiscordSocketClient _client;
         private BlackList _blackList;
         private MessageHandler _messageHandler;
+
+        #region Config Getters
+        private IConfiguration Config
+        {
+            get
+            {
+                if (_config != null) return _config;
+
+                var _builder = new ConfigurationBuilder()
+                    .SetBasePath(AppContext.BaseDirectory + "../../../../")
+                    .AddJsonFile(path: "config.json");
+                return _config = _builder.Build();
+            }
+        }
+        private IConfiguration _config = null;
+        public string Prefix
+        {
+            get => DevEnv ? Config["DevPrefix"] : Config["Prefix"];
+        }
+        public bool DevEnv
+        {
+            get => Convert.ToBoolean(Config["DevEnv"]);
+        }
+
+        public ulong RConChannel
+        {
+            get => DevEnv ? ulong.Parse(Config["DevRConChannel"]) : ulong.Parse(Config["RConChannel"]);
+        }
+
+        public string Token
+        {
+            get => DevEnv ? Config["DevToken"] : Config["Token"];
+        }
+        #endregion 
 
         private async Task MainAsync()
         {
@@ -58,39 +92,5 @@ namespace ServerProDiscord
 
             return Task.CompletedTask;
         }
-
-        #region Config Getters
-        private IConfiguration Config
-        {
-            get
-            {
-                if (_config != null) return _config;
-
-                var _builder = new ConfigurationBuilder()
-                    .SetBasePath(AppContext.BaseDirectory + "../../../../")
-                    .AddJsonFile(path: "config.json");
-                return _config = _builder.Build();
-            }
-        }
-        private IConfiguration _config = null;
-        public string Prefix
-        {
-            get => DevEnv ? Config["DevPrefix"] : Config["Prefix"];
-        }
-        public bool DevEnv
-        {
-            get => Convert.ToBoolean(Config["DevEnv"]);
-        }
-
-        public ulong RConChannel
-        {
-            get => DevEnv ? ulong.Parse(Config["DevRConChannel"]) : ulong.Parse(Config["RConChannel"]);
-        }
-
-        public string Token 
-        { 
-            get => DevEnv ? Config["DevToken"] : Config["Token"];
-        }
-        #endregion 
     }
 }
