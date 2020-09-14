@@ -11,7 +11,7 @@ namespace ServerProDiscord
     {
         public async static Task CheckEmbed(SocketMessage msg)
         {
-            if (!msg.Content.StartsWith($"{Program.Config["Prefix"]}embed")) return;
+            if (!msg.Content.StartsWith($"{Bot.Prefix}embed")) return;
 
             await CheckValid(msg);
             
@@ -66,7 +66,7 @@ namespace ServerProDiscord
 
             embed = embed.Substring(0, lastIndex - 2);
 
-            await SendRaw.Send(msg.Channel.Id, embed);
+            SendRaw.Send(msg.Channel.Id, embed);
         }
 
         private async static Task SendInvalidFormat(SocketMessage msg)

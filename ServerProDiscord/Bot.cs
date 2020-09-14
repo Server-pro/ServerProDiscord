@@ -11,29 +11,18 @@ using Microsoft.Extensions.Configuration.Json;
 
 namespace ServerProDiscord
 {
-    class Program
+    class Bot
     {
-        static void Main(string[] args) => new Program().MainAsync().GetAwaiter().GetResult();
+        static void Main(string[] args) => new Bot().MainAsync().GetAwaiter().GetResult();
 
         private static DiscordSocketClient _client;
 
-        private static IConfiguration Config;
-
-        public async Task MainAsync()
+        private async Task MainAsync()
         {
             _client = new DiscordSocketClient();
             _client.Log += Log;
             _client.MessageReceived += BlackList.DeleteBlackList;
             _client.MessageReceived += Embed.CheckEmbed;
-
-            var _builder = new ConfigurationBuilder()
-                .SetBasePath(AppContext.BaseDirectory + "../../../../")
-                .AddJsonFile(path: "config.json");
-            Config = _builder.Build();
-
-            BlackList._blackList = System.IO.File.ReadLines(BlackList.BlackListPath).ToList();
-
-            SendRaw.Init();
 
             await _client.LoginAsync(TokenType.Bot, Token);
             await _client.StartAsync();
@@ -43,11 +32,32 @@ namespace ServerProDiscord
         private Task Log(LogMessage msg)
         {
             Console.WriteLine(msg.Message);
+
+            //prepare in discord format then send to rcon
             string json = "{\"content\":\"" + msg.Message + "\"}";
             SendRaw.Send(RConChannel, json);
+
             return Task.CompletedTask;
         }
 
+        #region Config Getters
+        private static IConfiguration Config
+        {
+            get
+            {
+                if (_config != null) return _config;
+
+                var _builder = new ConfigurationBuilder()
+                    .SetBasePath(AppContext.BaseDirectory + "../../../../")
+                    .AddJsonFile(path: "config.json");
+                return _config = _builder.Build();
+            }
+        }
+        private static IConfiguration _config = null;
+        public static string Prefix
+        {
+            get => DevEnv ? Config["DevPrefix"] : Config["Prefix"];
+        }
         public static bool DevEnv
         {
             get => Convert.ToBoolean(Config["DevEnv"]);
@@ -62,5 +72,6 @@ namespace ServerProDiscord
         { 
             get => DevEnv ? Config["DevToken"] : Config["Token"];
         }
+        #endregion 
     }
 }
