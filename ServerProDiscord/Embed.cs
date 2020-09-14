@@ -66,7 +66,7 @@ namespace ServerProDiscord
 
             embed = embed.Substring(0, lastIndex - 2);
 
-            Program.SendCustom(msg.Channel.Id, embed);
+            await SendRaw.Send(msg.Channel.Id, embed);
         }
 
         private async static Task SendInvalidFormat(SocketMessage msg)
