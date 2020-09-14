@@ -11,37 +11,56 @@ using Microsoft.Extensions.Configuration.Json;
 
 namespace ServerProDiscord
 {
-    class Bot
+    public class Bot
     {
-        static void Main(string[] args) => new Bot().MainAsync().GetAwaiter().GetResult();
+        static void Main() => new Bot().MainAsync().GetAwaiter().GetResult();
 
-        private static DiscordSocketClient _client;
+        private DiscordSocketClient _client;
+        private BlackList _blackList;
+        private MessageHandler _messageHandler;
 
         private async Task MainAsync()
         {
             _client = new DiscordSocketClient();
+            _blackList = new BlackList("../../../../blacklist.txt");
+            _messageHandler = new MessageHandler(Token);
+
             _client.Log += Log;
-            _client.MessageReceived += BlackList.DeleteBlackList;
-            _client.MessageReceived += Embed.CheckEmbed;
+            _client.MessageReceived += _blackList.Check;
+            _client.MessageReceived += CallCommands;
 
             await _client.LoginAsync(TokenType.Bot, Token);
             await _client.StartAsync();
 
             await Task.Delay(-1);
         }
+
+        /// <summary>
+        /// Checks for text commands and calls the respective method.
+        /// </summary>
+        /// <param name="msg">Message sent by discord.</param>
+        /// <returns>Nothing.</returns>
+        private async Task CallCommands(SocketMessage msg)
+        {
+            if (!msg.Content.StartsWith(Prefix)) return;
+            string content = msg.Content.Substring(Prefix.Length);
+
+            if (content.StartsWith("sendcustom"))  await _messageHandler.CheckBlock(msg);
+        }
+
         private Task Log(LogMessage msg)
         {
             Console.WriteLine(msg.Message);
 
             //prepare in discord format then send to rcon
             string json = "{\"content\":\"" + msg.Message + "\"}";
-            SendRaw.Send(RConChannel, json);
+            _messageHandler.Send(RConChannel, json);
 
             return Task.CompletedTask;
         }
 
         #region Config Getters
-        private static IConfiguration Config
+        private IConfiguration Config
         {
             get
             {
@@ -53,22 +72,22 @@ namespace ServerProDiscord
                 return _config = _builder.Build();
             }
         }
-        private static IConfiguration _config = null;
-        public static string Prefix
+        private IConfiguration _config = null;
+        public string Prefix
         {
             get => DevEnv ? Config["DevPrefix"] : Config["Prefix"];
         }
-        public static bool DevEnv
+        public bool DevEnv
         {
             get => Convert.ToBoolean(Config["DevEnv"]);
         }
 
-        public static ulong RConChannel
+        public ulong RConChannel
         {
             get => DevEnv ? ulong.Parse(Config["DevRConChannel"]) : ulong.Parse(Config["RConChannel"]);
         }
 
-        public static string Token 
+        public string Token 
         { 
             get => DevEnv ? Config["DevToken"] : Config["Token"];
         }

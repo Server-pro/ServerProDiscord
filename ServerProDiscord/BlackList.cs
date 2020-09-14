@@ -7,28 +7,29 @@ using System.Threading.Tasks;
 
 namespace ServerProDiscord
 {
-    static class BlackList
+    class BlackList
     {
-        public static async Task DeleteBlackList(SocketMessage msg)
+        List<string> _list;
+
+        public BlackList(string path)
         {
-            if (List.Contains(msg.Content))
+            _list = System.IO.File.ReadLines(path).ToList();
+        }
+
+        public async Task Check(SocketMessage msg)
+        {
+            if (_list.Contains(msg.Content))
             {
                 await msg.DeleteAsync();
-                await WarnBlackList(msg);
+                await Warn(msg);
             }
         }
 
-        public static async Task WarnBlackList(SocketMessage msg)
+        public async Task Warn(SocketMessage msg)
         {
             //Warn logic here
             await msg.Channel.SendMessageAsync($"{msg.Author.Mention} has been warned!");
         }
-
-        public static List<string> List
-        {
-            get => _list ??= System.IO.File.ReadLines("../../../../blacklist.txt").ToList();
-        }
-        private static List<string> _list;
     }
 
 }

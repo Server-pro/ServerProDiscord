@@ -7,17 +7,33 @@ using System.Threading.Tasks;
 
 namespace ServerProDiscord
 {
-    static class Embed
+    public class MessageHandler
     {
-        public async static Task CheckEmbed(SocketMessage msg)
-        {
-            if (!msg.Content.StartsWith($"{Bot.Prefix}embed")) return;
+        private HttpClient _client;
 
-            await CheckValid(msg);
-            
+        public MessageHandler(string token)
+        {
+            _client = new HttpClient();
+            _client.DefaultRequestHeaders.Add("Authorization", "Bot " + token);
         }
 
-        private async static Task CheckValid(SocketMessage msg)
+        /// <summary>
+        /// Sends a sends a custom message using json format. Prints response code if not "OK."
+        /// </summary>
+        /// <param name="channel">The channel to send the message to.</param>
+        /// <param name="json">The formatted json sent in the request. Not altered in the method.</param>
+        /// <returns>Returns the HttpResponseMessage from the api.</returns>
+        public void Send(ulong channel, string json)
+        {
+            //build and send request
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var _response = _client.PostAsync($"https://discord.com/api/channels/{channel}/messages", content);
+
+            //log error codes
+            if (_response.Result.StatusCode.ToString() != "OK") Console.WriteLine(_response.Result.StatusCode);
+        }
+
+        public async Task CheckBlock(SocketMessage msg)
         {
             int index = msg.Content.IndexOf("`");
 
@@ -66,10 +82,10 @@ namespace ServerProDiscord
 
             embed = embed.Substring(0, lastIndex - 2);
 
-            SendRaw.Send(msg.Channel.Id, embed);
+            Send(msg.Channel.Id, embed);
         }
 
-        private async static Task SendInvalidFormat(SocketMessage msg)
+        private async Task SendInvalidFormat(SocketMessage msg)
         {
             await msg.Channel.SendMessageAsync(_invalidFormatMsg);
         }
