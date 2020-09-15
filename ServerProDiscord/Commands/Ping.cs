@@ -11,10 +11,12 @@ namespace ServerProDiscord.Commands
         public Ping()
         {
             _name = GetType().Name.ToLower();
-            AddArgument("channel", (value) =>
+            _description = "Testing command often used to verify if the bot is online.";
+
+            AddArgument(new string[]{"channel", "c"}, (value) =>
             {
                 _channel = Convert.ToUInt64(value);
-            });
+            }, "The channel in which the bot will respond");
         }
 
         private ulong _channel = 0;

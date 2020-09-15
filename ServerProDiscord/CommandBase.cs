@@ -1,4 +1,5 @@
-﻿using Discord.WebSocket;
+﻿using Discord;
+using Discord.WebSocket;
 using ServerProDiscord.Commands;
 using System;
 using System.Collections.Generic;
@@ -13,18 +14,25 @@ namespace ServerProDiscord
     {
         public delegate void InvokeSig(string value);
 
-        private static List<CommandBase> _commands = new List<CommandBase>();
+        protected static List<CommandBase> _commands = new List<CommandBase>();
 
         private Code _code = Code.Success;
-        protected string _name;
+        protected string _name = "unnamed";
+        protected string _description = "Description not set. ";
         private List<Argument> _arguments = new List<Argument>();
+
+        protected static EmbedBuilder AllHelpEB = new EmbedBuilder();
+        protected static List<EmbedBuilder> CommandHelpEB = new List<EmbedBuilder>();
+        
 
         #region Init/Callback
         public static void Init()
         {
+            AddCommand(new Help());
             AddCommand(new Ping());
             AddCommand(new SendRaw());
             AddCommand(new Suggestion());
+            AllHelpEB.Title = "Commands";
         }
 
         private static void AddCommand(CommandBase command)
@@ -38,6 +46,13 @@ namespace ServerProDiscord
                 }
             }
             _commands.Add(command);
+
+            var temp = new EmbedBuilder();
+            temp.Title = ("Command: " + command._name);
+            temp.Description = command._description;
+            CommandHelpEB.Add(temp);
+
+            AllHelpEB.AddField(command._name, command._description);
         }
 
         public static async Task CallCommands(SocketMessage sm, string prefix)
@@ -82,26 +97,29 @@ namespace ServerProDiscord
             _code = Code.Success;
             for(int i = 0; i < _arguments.Count; i++)
             {
-                //example: if the argument name is `test` then it will find a match in `!ping "test:value"` and invoke the delegate with "value"
-                Regex r = new Regex("\"" + _arguments[i].name + ":.*?\"", RegexOptions.Multiline);
-                Match match = r.Match(msg);
-
-                _arguments[i].SetSupplied(false);
-
-                if (match.Success)
+                for(int h = 0; h < _arguments[i].name.Length; h++)
                 {
-                    _arguments[i].SetSupplied(true);
-                    //strip off quotes, colon, and argument name
-                    string value = match.Value.Substring(_arguments[i].name.Length + 2, match.Length - 3 - _arguments[i].name.Length);
-                    _arguments[i].invoke.Invoke(value);
+                    //example: if the argument name is `test` then it will find a match in `!ping "test:value"` and invoke the delegate with "value"
+                    Regex r = new Regex("-" + _arguments[i].name[h] + " .* ?", RegexOptions.Multiline);
+                    Match match = r.Match(msg);
+
+                    _arguments[i].SetSupplied(false);
+
+                    if (match.Success)
+                    {
+                        _arguments[i].SetSupplied(true);
+                        //strip off quotes, colon, and argument name
+                        string value = match.Value.Substring(_arguments[i].name[h].Length + 1, match.Length - 1 - _arguments[i].name[h].Length);
+                        _arguments[i].invoke.Invoke(value);
+                    }
                 }
             }
 
-            await CheckArguments();
+            CheckArguments();
             await Respond(sm, msg);
         }
 
-        protected void AddArgument(string n, InvokeSig i, bool r = false)
+        protected void AddArgument(string[] n, InvokeSig i, string d, bool r = false)
         {
             foreach (var a in _arguments)
             {
@@ -111,15 +129,28 @@ namespace ServerProDiscord
                     return;
                 }
             }
-            _arguments.Add(new Argument(n, i, r));
+            _arguments.Add(new Argument(n, i, d, r));
         }
 
-        protected async Task CheckArguments()
+        protected void CheckArguments()
         {
             foreach(var a in _arguments)
             {
                 if (a.required && !a.supplied) _code = Code.MissingArgument;
             }
+        }
+
+        protected bool HasArgument(string name)
+        {
+            foreach(var a in _arguments)
+            {
+                foreach(var n in a.name)
+                {
+                    if (n == name)
+                        return a.supplied;
+                }
+            }
+            return false;
         }
         #endregion 
         
@@ -127,14 +158,16 @@ namespace ServerProDiscord
 
         public class Argument
         {
-            public string name;
+            public string[] name;
             public InvokeSig invoke;
+            public string description;
             public bool required;
             public bool supplied;
-            public Argument(string n, InvokeSig i, bool r = false)
+            public Argument(string[] n, InvokeSig i, string d, bool r)
             {
                 name = n;
                 invoke = i;
+                description = d;
                 required = r;
                 supplied = false;
             }

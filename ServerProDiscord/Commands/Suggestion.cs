@@ -13,14 +13,16 @@ namespace ServerProDiscord.Commands
         public Suggestion()
         {
             _name = GetType().Name.ToLower();
-            AddArgument("title", (val) =>
+            _description = "Formally send a suggestion to the suggestions channel. Adds reactions to vote on the suggestion.";
+            
+            AddArgument(new string[] { "title", "t" }, (val) =>
             {
                 title = val;
-            }, true);
-            AddArgument("body", (val) =>
+            }, "The title. Very brief explanation of your suggestion.", true);
+            AddArgument(new string[] { "body", "b"}, (val) =>
             {
                 body = val;
-            }, true);
+            }, "The body portion of your suggestion. Describe your suggestion in detail here.", true);
         }
 
         string title = null;

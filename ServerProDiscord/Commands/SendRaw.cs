@@ -12,10 +12,12 @@ namespace ServerProDiscord.Commands
         public SendRaw()
         {
             _name = GetType().Name.ToLower();
-            AddArgument("channel", (val) =>
+            _description = "Sends a manual POST request to the discord api from the bot. The content of this request must be properly json formatted in a code block.";
+
+            AddArgument(new string[] { "channel" }, (val) =>
             {
                 channel = Convert.ToUInt64(val);
-            });
+            }, "The channel in which the bot will respond");
         }
 
         private ulong channel = 0;
