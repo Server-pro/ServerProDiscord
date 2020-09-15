@@ -13,9 +13,13 @@ namespace ServerProDiscord
 {
     public class Bot
     {
-        private static void Main() => new Bot().MainAsync().GetAwaiter().GetResult();
+        public static Bot Instance;
+        private static void Main() {
+            Instance = new Bot();
+            Instance.MainAsync().GetAwaiter().GetResult();
+        }
 
-        private DiscordSocketClient _client;
+        public DiscordSocketClient _client;
         private BlackList _blackList;
         private MessageHandler _messageHandler;
 
@@ -53,15 +57,19 @@ namespace ServerProDiscord
         }
         #endregion 
 
+        private async Task BotCallCommands(SocketMessage sm) => await CommandBase.CallCommands(sm, Prefix);
+
         private async Task MainAsync()
         {
             _client = new DiscordSocketClient();
             _blackList = new BlackList("../../../../blacklist.txt");
             _messageHandler = new MessageHandler(Token);
+            CommandBase.Init();
 
             _client.Log += Log;
             _client.MessageReceived += _blackList.Check;
             _client.MessageReceived += CallCommands;
+            _client.MessageReceived += BotCallCommands;
 
             await _client.LoginAsync(TokenType.Bot, Token);
             await _client.StartAsync();
@@ -87,8 +95,8 @@ namespace ServerProDiscord
             Console.WriteLine(msg.Message);
 
             //prepare in discord format then send to rcon
-            string json = "{\"content\":\"" + msg.Message + "\"}";
-            _messageHandler.Send(RConChannel, json);
+            //string json = "{\"content\":\"" + msg.Message + "\"}";
+            //_messageHandler.Send(RConChannel, json);
 
             return Task.CompletedTask;
         }
