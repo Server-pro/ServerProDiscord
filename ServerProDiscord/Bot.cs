@@ -57,9 +57,9 @@ namespace ServerProDiscord
         }
         #endregion 
 
-        public async Task Send(ulong channel, string message, bool isTTS = false, Embed embed = null, RequestOptions options = null)
+        public async Task<Discord.Rest.RestUserMessage> Send(ulong channel, string message = null, bool isTTS = false, Embed embed = null, RequestOptions options = null)
         {
-            await ((SocketTextChannel)_client.GetChannel(channel)).SendMessageAsync(message, isTTS, embed, options);
+            return await ((SocketTextChannel)_client.GetChannel(channel)).SendMessageAsync(message, isTTS, embed, options);
         }
 
         private async Task BotCallCommands(SocketMessage sm) => await CommandBase.CallCommands(sm, Prefix);
