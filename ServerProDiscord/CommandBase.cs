@@ -42,6 +42,7 @@ namespace ServerProDiscord
 
         public static async Task CallCommands(SocketMessage sm, string prefix)
         {
+            if (!sm.Content.StartsWith(prefix)) return;
             string msg = sm.Content.Substring(prefix.Length).ToLower();
 
             foreach(var c in _commands)
@@ -78,6 +79,7 @@ namespace ServerProDiscord
         #region Arguments
         private async Task RunArguments(SocketMessage sm, string msg)
         {
+            _code = Code.Success;
             for(int i = 0; i < _arguments.Count; i++)
             {
                 //example: if the argument name is `test` then it will find a match in `!ping "test:value"` and invoke the delegate with "value"
