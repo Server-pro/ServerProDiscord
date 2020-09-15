@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ServerProDiscord.Commands
 {
@@ -18,6 +19,6 @@ namespace ServerProDiscord.Commands
 
         private ulong _channel = 0;
 
-        protected override void Run(SocketMessage sm, string msg) => ((SocketTextChannel)Bot.Instance._client.GetChannel(_channel == 0 ? sm.Channel.Id : _channel)).SendMessageAsync("pong");
+        protected override async Task Run(SocketMessage sm, string msg) => await ((SocketTextChannel)Bot.Instance._client.GetChannel(_channel == 0 ? sm.Channel.Id : _channel)).SendMessageAsync("pong");
     }
 }

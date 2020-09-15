@@ -22,6 +22,7 @@ namespace ServerProDiscord
         public static void Init()
         {
             _registered.Add(new Ping());
+            _registered.Add(new SendCustom());
         }
 
         public static async Task CallCommands(SocketMessage sm, string prefix)
@@ -30,12 +31,12 @@ namespace ServerProDiscord
 
             foreach(var c in _registered)
             {
-                if(msg.StartsWith(c._call)) c.RunArguments(sm, msg.Substring(c._call.Length));
+                if(msg.StartsWith(c._call)) await c.RunArguments(sm, msg.Substring(c._call.Length));
             }
             await Task.CompletedTask;
         }
 
-        protected void RunArguments(SocketMessage sm, string msg)
+        protected async Task RunArguments(SocketMessage sm, string msg)
         {
             foreach(var a in _arguments)
             {
@@ -51,10 +52,10 @@ namespace ServerProDiscord
                 }
             }
 
-            Run(sm, msg);
+            await Run(sm, msg);
         }
 
-        protected abstract void Run(SocketMessage sm, string msg);
+        protected abstract Task Run(SocketMessage sm, string msg);
 
         protected void AddArgument(string n, InvokeSig i) => _arguments.Add(new Argument(n, i));
 

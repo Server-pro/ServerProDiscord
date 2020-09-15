@@ -21,7 +21,7 @@ namespace ServerProDiscord
 
         public DiscordSocketClient _client;
         private BlackList _blackList;
-        private MessageHandler _messageHandler;
+        public MessageHandler _messageHandler;
 
         #region Config Getters
         private IConfiguration Config
@@ -68,26 +68,12 @@ namespace ServerProDiscord
 
             _client.Log += Log;
             _client.MessageReceived += _blackList.Check;
-            _client.MessageReceived += CallCommands;
             _client.MessageReceived += BotCallCommands;
 
             await _client.LoginAsync(TokenType.Bot, Token);
             await _client.StartAsync();
 
             await Task.Delay(-1);
-        }
-
-        /// <summary>
-        /// Checks for text commands and calls the respective method.
-        /// </summary>
-        /// <param name="msg">Message sent by discord.</param>
-        /// <returns>Nothing.</returns>
-        private async Task CallCommands(SocketMessage msg)
-        {
-            if (!msg.Content.StartsWith(Prefix)) return;
-            string content = msg.Content.Substring(Prefix.Length);
-
-            if (content.StartsWith("sendcustom"))  await _messageHandler.CheckBlock(msg);
         }
 
         private Task Log(LogMessage msg)
