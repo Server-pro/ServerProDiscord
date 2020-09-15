@@ -13,30 +13,45 @@ namespace ServerProDiscord
     {
         public delegate void InvokeSig(string value);
 
-        private static List<CommandBase> _registered = new List<CommandBase>();
+        private static List<CommandBase> _commands = new List<CommandBase>();
 
-        protected string _call;
-
+        protected string _name;
         private List<Argument> _arguments = new List<Argument>();
 
+        #region Init/Callback
         public static void Init()
         {
-            _registered.Add(new Ping());
-            _registered.Add(new SendCustom());
+            AddCommand(new Ping());
+            AddCommand(new SendRaw());
+        }
+
+        private static void AddCommand(CommandBase command)
+        {
+            foreach(var c in _commands)
+            {
+                if(c._name == command._name)
+                {
+                    Console.WriteLine($"Error: Duplicate register of command '{c._name}'. Skipping second instance.");
+                    return;
+                }
+            }
+            _commands.Add(command);
         }
 
         public static async Task CallCommands(SocketMessage sm, string prefix)
         {
             string msg = sm.Content.Substring(prefix.Length).ToLower();
 
-            foreach(var c in _registered)
+            foreach(var c in _commands)
             {
-                if(msg.StartsWith(c._call)) await c.RunArguments(sm, msg.Substring(c._call.Length));
+                if(msg.StartsWith(c._name)) await c.RunArguments(sm, msg.Substring(c._name.Length));
             }
             await Task.CompletedTask;
         }
+        #endregion
 
-        protected async Task RunArguments(SocketMessage sm, string msg)
+        #region Arguments
+        private async Task RunArguments(SocketMessage sm, string msg)
         {
             foreach(var a in _arguments)
             {
@@ -55,9 +70,21 @@ namespace ServerProDiscord
             await Run(sm, msg);
         }
 
+        protected void AddArgument(string n, InvokeSig i)
+        {
+            foreach (var a in _arguments)
+            {
+                if (a.name == n)
+                {
+                    Console.WriteLine($"Error: Duplicate register of argument '{n}' in command {GetType().Name.ToLower()}. Skipping second instance.");
+                    return;
+                }
+            }
+            _arguments.Add(new Argument(n, i));
+        }
+        #endregion 
+        
         protected abstract Task Run(SocketMessage sm, string msg);
-
-        protected void AddArgument(string n, InvokeSig i) => _arguments.Add(new Argument(n, i));
 
         public struct Argument
         {

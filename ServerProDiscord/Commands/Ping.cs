@@ -10,7 +10,7 @@ namespace ServerProDiscord.Commands
     {
         public Ping()
         {
-            _call = "ping";
+            _name = GetType().Name.ToLower();
             AddArgument("channel", (value) =>
             {
                 _channel = Convert.ToUInt64(value);
@@ -19,6 +19,6 @@ namespace ServerProDiscord.Commands
 
         private ulong _channel = 0;
 
-        protected override async Task Run(SocketMessage sm, string msg) => await ((SocketTextChannel)Bot.Instance._client.GetChannel(_channel == 0 ? sm.Channel.Id : _channel)).SendMessageAsync("pong");
+        protected override async Task Run(SocketMessage sm, string msg) => await Bot.Instance.Send(_channel == 0 ? sm.Channel.Id : _channel, msg);
     }
 }
