@@ -43,7 +43,7 @@ namespace ServerProDiscord
         public static async Task CallCommands(SocketMessage sm, string prefix)
         {
             if (!sm.Content.StartsWith(prefix)) return;
-            string msg = sm.Content.Substring(prefix.Length).ToLower();
+            string msg = sm.Content.Substring(prefix.Length);
 
             foreach(var c in _commands)
             {
