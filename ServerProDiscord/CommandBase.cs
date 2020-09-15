@@ -50,6 +50,12 @@ namespace ServerProDiscord
             var temp = new EmbedBuilder();
             temp.Title = ("Command: " + command._name);
             temp.Description = command._description;
+
+            foreach (var a in command._arguments)
+            {
+                temp.AddField($"Argument: {a.name[0]} {(a.required ? "(Required)" : "(Optional)")} ", a.description);
+            }
+
             CommandHelpEB.Add(temp);
 
             AllHelpEB.AddField(command._name, command._description);
