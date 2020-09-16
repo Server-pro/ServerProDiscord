@@ -37,7 +37,7 @@ namespace ServerProDiscord
         public bool StripCodeBlock(string content, out string result)
         {
             result = null;
-            Regex codeBlock = new Regex("^`{3}.*`{3}$", RegexOptions.Multiline);
+            Regex codeBlock = new Regex("```[^`]*```", RegexOptions.Multiline);
             var match = codeBlock.Match(content);
 
             if (match.Success) result = match.Value.Substring(3, match.Length - 6); ;
