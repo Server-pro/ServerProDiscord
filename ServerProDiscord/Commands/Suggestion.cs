@@ -70,5 +70,6 @@ namespace ServerProDiscord.Commands
             await message.AddReactionAsync(yes);
             await message.AddReactionAsync(no);
         }
+        protected override bool HasPermission(string id) => true;
     }
 }

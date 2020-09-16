@@ -119,6 +119,11 @@ namespace ServerProDiscord
                         await sm.Channel.SendMessageAsync(sb.ToString());
                         break;
                     }
+                case Code.PermissionDenied:
+                    {
+                        await sm.Channel.SendMessageAsync("No permission.");
+                        break;
+                    }
             }
         }
         #endregion
@@ -165,6 +170,7 @@ namespace ServerProDiscord
             }
 
             CheckArguments();
+            if (!HasPermissionBase(sm.Author.Id.ToString())) _code = Code.PermissionDenied;
             await Respond(sm, msg);
         }
 
@@ -232,19 +238,29 @@ namespace ServerProDiscord
             }
         }
         private IConfiguration _permissions;
-        protected bool IsAdmin(ulong UserID)
+        protected bool IsAdmin(string UserID)
         {
-            for(int i = 0; i < Permissions["admin"].Length; i++)
+
+            var admins = Permissions.GetSection("admin").GetChildren().ToArray().Select(v => v.Value).ToArray();
+            foreach(var a in admins)
             {
-                if (UserID == Convert.ToUInt64(Permissions["admin"][i]))
+                if (UserID.ToString() == a)
                     return true;
             }
+
             return false;
+        }
+
+        private bool HasPermissionBase(string id)
+        {
+            if (IsAdmin(id))
+                return true;
+            return HasPermission(id);
         }
         #endregion
 
         protected abstract Task Run(SocketMessage sm, string msg);
-        protected bool HasPermission() => true;
+        protected abstract bool HasPermission(string id);
 
         public class Argument
         {
@@ -270,7 +286,8 @@ namespace ServerProDiscord
         enum Code
         {
             Success = 0,
-            MissingArgument = 1
+            MissingArgument = 1,
+            PermissionDenied = 2
         }
     }
 

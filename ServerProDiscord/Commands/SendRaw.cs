@@ -29,5 +29,7 @@ namespace ServerProDiscord.Commands
             if (isCodeBlock) Bot.Instance._messageHandler.SendRaw(channel == 0 ? sm.Channel.Id : channel, content);
             else await Bot.Instance.Send(sm.Channel.Id, "Code block missing.");
         }
+
+        protected override bool HasPermission(string id) => false;
     }
 }
