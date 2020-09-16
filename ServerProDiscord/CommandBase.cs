@@ -38,6 +38,7 @@ namespace ServerProDiscord
             AddCommand(new Ping());
             AddCommand(new SendRaw());
             AddCommand(new Suggestion());
+            AddCommand(new Support());
 
             //Admin commands
         }
