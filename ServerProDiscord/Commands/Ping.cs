@@ -12,6 +12,7 @@ namespace ServerProDiscord.Commands
         {
             _name = GetType().Name.ToLower();
             _description = "Testing command often used to verify if the bot is online.";
+            _example = "-c 755449336065818764";
 
             AddArgument(new string[]{"channel", "c"}, (value) =>
             {

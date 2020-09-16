@@ -18,7 +18,8 @@ namespace ServerProDiscord
 
         private Code _code = Code.Success;
         protected string _name = "unnamed";
-        protected string _description = "Description not set. ";
+        protected string _description = "Description not set.";
+        protected string _example = "No example set.";
         private List<Argument> _arguments = new List<Argument>();
 
         protected static EmbedBuilder AllHelpEB = new EmbedBuilder();
@@ -53,8 +54,11 @@ namespace ServerProDiscord
 
             foreach (var a in command._arguments)
             {
-                temp.AddField($"Argument: {a.name[0]} {(a.required ? "(Required)" : "(Optional)")} ", a.description);
+                string aliases = "";
+                foreach (var n in a.name) aliases += $"{n}, ";
+                temp.AddField($"Argument: {aliases.Substring(0, aliases.Length -2)} {(a.required ? "(Required)" : "(Optional)")} ", a.description);
             }
+            temp.AddField("Example:", $"{Bot.Instance.Prefix}{command._name} {command._example}");
 
             CommandHelpEB.Add(temp);
 
@@ -88,7 +92,7 @@ namespace ServerProDiscord
                         StringBuilder sb = new StringBuilder("Missing the following args:\n");
                         foreach(var c in missing)
                         {
-                            sb.Append($"\t- {c.name}");
+                            sb.Append($"\t- {c.name[0]}\n");
                         }
                         await sm.Channel.SendMessageAsync(sb.ToString());
                         break;
@@ -103,19 +107,30 @@ namespace ServerProDiscord
             _code = Code.Success;
             for(int i = 0; i < _arguments.Count; i++)
             {
-                for(int h = 0; h < _arguments[i].name.Length; h++)
+                _arguments[i].SetSupplied(false);
+                for (int h = 0; h < _arguments[i].name.Length; h++)
                 {
                     //example: if the argument name is `test` then it will find a match in `!ping "test:value"` and invoke the delegate with "value"
-                    Regex r = new Regex("-" + _arguments[i].name[h] + " .* ?", RegexOptions.Multiline);
-                    Match match = r.Match(msg);
+                    Regex Quotes = new Regex($"-{_arguments[i].name[h]} \"[^\"]*\"", RegexOptions.Multiline);
+                    Regex NoQuotes = new Regex($"-{_arguments[i].name[h]} [^\"]*", RegexOptions.Multiline);
+                    Match match = Quotes.Match(msg);
 
-                    _arguments[i].SetSupplied(false);
+                    bool IsQuotes = true;
+                    if (!match.Success)
+                    {
+                        match = NoQuotes.Match(msg);
+                        IsQuotes = false;
+                    }
 
                     if (match.Success)
                     {
                         _arguments[i].SetSupplied(true);
-                        //strip off quotes, colon, and argument name
-                        string value = match.Value.Substring(_arguments[i].name[h].Length + 1, match.Length - 1 - _arguments[i].name[h].Length);
+
+                        //strip off argument name, dash, space, quotes
+                        int startIndex = _arguments[i].name[h].Length + 2 + (IsQuotes ? 1 : 0);
+                        int length = match.Length - _arguments[i].name[h].Length - 2 - (IsQuotes ? 2 : 0);
+
+                        string value = match.Value.Substring(startIndex, length);
                         _arguments[i].invoke.Invoke(value);
                     }
                 }

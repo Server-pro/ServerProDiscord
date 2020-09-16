@@ -12,7 +12,8 @@ namespace ServerProDiscord.Commands
         public Help()
         {
             _name = GetType().Name.ToLower();
-            _description = "List all commands.";
+            _description = "List all commands. Use 'help -c command' for info on a specific command.";
+            _example = "-c help";
 
             AddArgument(new string[]{"command", "c"}, (value) =>
             {

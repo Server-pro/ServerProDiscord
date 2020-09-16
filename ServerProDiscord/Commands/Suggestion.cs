@@ -14,6 +14,7 @@ namespace ServerProDiscord.Commands
         {
             _name = GetType().Name.ToLower();
             _description = "Formally send a suggestion to the suggestions channel. Adds reactions to vote on the suggestion.";
+            _example = "-t AwesomeSuggestion -b AwesomeDescription";
             
             AddArgument(new string[] { "title", "t" }, (val) =>
             {
@@ -27,8 +28,8 @@ namespace ServerProDiscord.Commands
 
         string title = null;
         string body = null;
-        private Emoji yes = new Emoji("😊");
-        private Emoji no = new Emoji("🤮");
+        private readonly Emoji yes = new Emoji("😊");
+        private readonly Emoji no = new Emoji("🤮");
 
         #region Config
         private IConfiguration Config

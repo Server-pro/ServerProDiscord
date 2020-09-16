@@ -13,6 +13,7 @@ namespace ServerProDiscord.Commands
         {
             _name = GetType().Name.ToLower();
             _description = "Sends a manual POST request to the discord api from the bot. The content of this request must be properly json formatted in a code block.";
+            _example = "-c 754493019020984431 ```{\"content\":\"testing\"}```";
 
             AddArgument(new string[] { "channel" }, (val) =>
             {
