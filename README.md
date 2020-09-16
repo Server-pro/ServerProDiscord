@@ -3,7 +3,7 @@
 # ServerProBot
 
 ### Introduction
-The ServerProBot is a custom bot, developed for Server.pro's official Discord server. It is written in C# and can be hosted on any server with a .NET environment pre-configured, such as [Mono](https://www.mono-project.com/download/stable/#download-lin).
+The ServerProBot is a custom bot, developed for Server.pro's official Discord server. It is written in C# and can be hosted on any server with a .NET environment pre-configured, such as [Mono](https://www.mono-project.com/download/stable/#download-link).
 
 This tool is still in development, and is available under the GPLv3 License.
 
