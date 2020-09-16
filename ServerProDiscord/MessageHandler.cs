@@ -8,10 +8,17 @@ using System.Threading.Tasks;
 
 namespace ServerProDiscord
 {
+    /// <summary>
+    /// Holds httpclient for raw messages and other string methods. 
+    /// </summary>
     public class MessageHandler
     {
         private HttpClient _client;
 
+        /// <summary>
+        /// Initializes an HttpClient and adds the authorization header.
+        /// </summary>
+        /// <param name="token">Provide the bot's token here.</param>
         public MessageHandler(string token)
         {
             _client = new HttpClient();
@@ -34,6 +41,12 @@ namespace ServerProDiscord
             if (_response.Result.StatusCode.ToString() != "OK") Console.WriteLine(_response.Result.StatusCode);
         }
 
+        /// <summary>
+        /// Finds a discord-formatted code block in a message. 
+        /// </summary>
+        /// <param name="content">The string it searches through.</param>
+        /// <param name="result">The content inside the code block. Null if not found.</param>
+        /// <returns>Whether or not it found a code block.</returns>
         public bool StripCodeBlock(string content, out string result)
         {
             result = null;
