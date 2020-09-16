@@ -111,8 +111,8 @@ namespace ServerProDiscord
                 for (int h = 0; h < _arguments[i].name.Length; h++)
                 {
                     //example: if the argument name is `test` then it will find a match in `!ping "test:value"` and invoke the delegate with "value"
-                    Regex Quotes = new Regex($"-{_arguments[i].name[h]} \"[^\"]*\"", RegexOptions.Multiline);
-                    Regex NoQuotes = new Regex($"-{_arguments[i].name[h]} [^\"]*", RegexOptions.Multiline);
+                    Regex Quotes = new Regex($"-{_arguments[i].name[h]} \"[^\"]*", RegexOptions.Multiline);
+                    Regex NoQuotes = new Regex($"-{_arguments[i].name[h]} [^ ]*", RegexOptions.Multiline);
                     Match match = Quotes.Match(msg);
 
                     bool IsQuotes = true;
@@ -128,7 +128,7 @@ namespace ServerProDiscord
 
                         //strip off argument name, dash, space, quotes
                         int startIndex = _arguments[i].name[h].Length + 2 + (IsQuotes ? 1 : 0);
-                        int length = match.Length - _arguments[i].name[h].Length - 2 - (IsQuotes ? 2 : 0);
+                        int length = match.Length - _arguments[i].name[h].Length - 2 - (IsQuotes ? 1 : 0);
 
                         string value = match.Value.Substring(startIndex, length);
                         _arguments[i].invoke.Invoke(value);
