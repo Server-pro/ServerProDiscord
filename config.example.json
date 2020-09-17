@@ -1,0 +1,11 @@
+{
+  "DevEnv": true,
+
+  "Prefix": "!",
+  "Token": "",
+  "RConChannel": 111111111111111111,
+
+  "DevPrefix": "?",
+  "DevToken": "",
+  "DevRConChannel": 111111111111111111,
+}
