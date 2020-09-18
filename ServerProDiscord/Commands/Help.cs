@@ -40,6 +40,6 @@ namespace ServerProDiscord.Commands
             else
                 await sm.Channel.SendMessageAsync(embed: _all.Build());
         }
-        protected override bool HasPermission(string id) => true;
+        protected override bool HasPermission(ulong id) => true;
     }
 }

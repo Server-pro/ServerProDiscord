@@ -30,6 +30,6 @@ namespace ServerProDiscord.Commands
             else await Bot.Instance.Send(sm.Channel.Id, "Code block missing.");
         }
 
-        protected override bool HasPermission(string id) => false;
+        protected override bool HasPermission(ulong id) => false;
     }
 }

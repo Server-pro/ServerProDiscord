@@ -171,7 +171,7 @@ namespace ServerProDiscord
             }
 
             CheckArguments();
-            if (!HasPermissionBase(sm.Author.Id.ToString())) _code = Code.PermissionDenied;
+            if (!HasPermissionBase(sm.Author.Id)) _code = Code.PermissionDenied;
             await Respond(sm, msg);
         }
 
@@ -239,20 +239,20 @@ namespace ServerProDiscord
             }
         }
         private IConfiguration _permissions;
-        protected bool IsAdmin(string UserID)
+        protected bool IsAdmin(ulong UserID)
         {
 
-            var admins = Permissions.GetSection("admin").GetChildren().ToArray().Select(v => v.Value).ToArray();
+            var admins = Config.Admins;
             foreach(var a in admins)
             {
-                if (UserID.ToString() == a)
+                if (UserID == a)
                     return true;
             }
 
             return false;
         }
 
-        private bool HasPermissionBase(string id)
+        private bool HasPermissionBase(ulong id)
         {
             if (IsAdmin(id))
                 return true;
@@ -261,7 +261,7 @@ namespace ServerProDiscord
         #endregion
 
         protected abstract Task Run(SocketMessage sm, string msg);
-        protected abstract bool HasPermission(string id);
+        protected abstract bool HasPermission(ulong id);
 
 
 

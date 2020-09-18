@@ -26,6 +26,6 @@ namespace ServerProDiscord.Commands
 
         protected override async Task Run(SocketMessage sm, string msg) 
             => await Bot.Instance.Send(_channel == 0 ? sm.Channel.Id : _channel, _supportMsg);
-        protected override bool HasPermission(string id) => true;
+        protected override bool HasPermission(ulong id) => true;
     }
 }
