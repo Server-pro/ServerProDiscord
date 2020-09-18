@@ -24,42 +24,6 @@ namespace ServerProDiscord
 
         private BlackList _blackList;
 
-        /*
-        #region Config Getters
-        private IConfiguration Config
-        {
-            get
-            {
-                if (_config != null) return _config;
-
-                var _builder = new ConfigurationBuilder()
-                    .SetBasePath(AppContext.BaseDirectory + "../../../../")
-                    .AddJsonFile(path: "config.json");
-                return _config = _builder.Build();
-            }
-        }
-        private IConfiguration _config = null;
-        public string Prefix
-        {
-            get => DevEnv ? Config["DevPrefix"] : Config["Prefix"];
-        }
-        public bool DevEnv
-        {
-            get => Convert.ToBoolean(Config["DevEnv"]);
-        }
-
-        public ulong RConChannel
-        {
-            get => DevEnv ? ulong.Parse(Config["DevRConChannel"]) : ulong.Parse(Config["RConChannel"]);
-        }
-
-        public string Token
-        {
-            get => DevEnv ? Config["DevToken"] : Config["Token"];
-        }
-        #endregion 
-        */
-
         public async Task<Discord.Rest.RestUserMessage> Send(ulong channel, string message = null, bool isTTS = false, Embed embed = null, RequestOptions options = null)
         {
             return await ((SocketTextChannel)_client.GetChannel(channel)).SendMessageAsync(message, isTTS, embed, options);
