@@ -22,7 +22,7 @@ namespace ServerProDiscord
             }
         }
 
-        public async Task Warn(SocketMessage msg)
+        private async Task Warn(SocketMessage msg)
         {
             //Warn logic here
             await msg.Channel.SendMessageAsync($"{msg.Author.Mention} has been warned!");

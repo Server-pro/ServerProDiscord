@@ -6,29 +6,28 @@ using System.Text;
 using System.Threading.Tasks;
 using Discord;
 using Discord.WebSocket;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 
 namespace ServerProDiscord
 {
     public class Bot
     {
         public static Bot Instance;
+
         private static void Main() {
             Instance = new Bot();
             Instance.MainAsync().GetAwaiter().GetResult();
         }
 
-        public DiscordSocketClient _client;
-        public MessageHandler _messageHandler;
-
         private BlackList _blackList;
+        private DiscordSocketClient _client;
+        private MessageHandler _messageHandler;
 
         public async Task<Discord.Rest.RestUserMessage> Send(ulong channel, string message = null, bool isTTS = false, Embed embed = null, RequestOptions options = null)
         {
             return await ((SocketTextChannel)_client.GetChannel(channel)).SendMessageAsync(message, isTTS, embed, options);
         }
 
+        public async Task SendRaw(ulong channel, string json) => await _messageHandler.SendRaw(channel, json);
         private async Task BotCallCommands(SocketMessage sm) => await CommandBase.CallCommands(sm, Config.Profile.Prefix);
 
         private async Task MainAsync()
@@ -46,7 +45,6 @@ namespace ServerProDiscord
 
             await _client.LoginAsync(TokenType.Bot, Config.Token);
             await _client.StartAsync();
-
             await Task.Delay(-1);
         }
 

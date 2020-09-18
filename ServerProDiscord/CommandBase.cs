@@ -16,8 +16,6 @@ namespace ServerProDiscord
     /// </summary>
     abstract class CommandBase
     {
-        public delegate void InvokeSig(string value);
-
         private static string _prefix;
         private static readonly List<CommandBase> _commands = new List<CommandBase>();
         private static readonly EmbedBuilder _globalHelpEmbed = new EmbedBuilder();
@@ -30,7 +28,6 @@ namespace ServerProDiscord
         private Code _code = Code.Success;
         private readonly List<Argument> _arguments = new List<Argument>();
         
-
         #region Init/Callback
         public static void Init(string prefix)
         {
@@ -144,7 +141,7 @@ namespace ServerProDiscord
             _code = Code.Success;
             for(int i = 0; i < _arguments.Count; i++)
             {
-                _arguments[i].SetSupplied(false);
+                _arguments[i].supplied = false;
                 for (int h = 0; h < _arguments[i].name.Length; h++)
                 {
                     //example: if the argument name is `test` then it will find a match in `!ping "test:value"` and invoke the delegate with "value"
@@ -161,7 +158,7 @@ namespace ServerProDiscord
 
                     if (match.Success)
                     {
-                        _arguments[i].SetSupplied(true);
+                        _arguments[i].supplied = true;
 
                         //strip off argument name, dash, space, quotes
                         int startIndex = _arguments[i].name[h].Length + 2 + (IsQuotes ? 1 : 0);
@@ -185,7 +182,7 @@ namespace ServerProDiscord
         /// <param name="i">The delegate (invoke).</param>
         /// <param name="d">The description (For help command).</param>
         /// <param name="r">Required. If true the command will fail if it is not supplied.</param>
-        protected void AddArgument(string[] n, InvokeSig i, string d, bool r = false)
+        protected void AddArgument(string[] n, Argument.InvokeSig i, string d, bool r = false)
         {
             foreach (var a in _arguments)
             {
@@ -266,26 +263,7 @@ namespace ServerProDiscord
         protected abstract Task Run(SocketMessage sm, string msg);
         protected abstract bool HasPermission(string id);
 
-        public class Argument
-        {
-            public string[] name;
-            public InvokeSig invoke;
-            public string description;
-            public bool required;
-            public bool supplied;
-            public Argument(string[] n, InvokeSig i, string d, bool r)
-            {
-                name = n;
-                invoke = i;
-                description = d;
-                required = r;
-                supplied = false;
-            }
-            public void SetSupplied(bool val)
-            {
-                supplied = val;
-            }
-        }
+
 
         enum Code
         {

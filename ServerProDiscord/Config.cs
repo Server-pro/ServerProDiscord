@@ -32,21 +32,11 @@ namespace ServerProDiscord
             Token = System.IO.File.ReadAllText(tokenPath);
         }
 
-
-
         public class Map {
-            public bool DevEnv = false;
-            public RuntimeProfile DevProfile = new RuntimeProfile();
-            public RuntimeProfile ProdProfile = new RuntimeProfile();
+            public bool DevEnv;
+            public RuntimeProfile DevProfile;
+            public RuntimeProfile ProdProfile;
             public ulong[] Admins;
-
-            public Map()
-            {
-                DevEnv = false;
-                DevProfile = new RuntimeProfile();
-                ProdProfile = new RuntimeProfile();
-                Admins = new ulong[] { 0 };
-            }
         }
     }
 }

@@ -31,14 +31,14 @@ namespace ServerProDiscord
         /// <param name="channel">The channel to send the message to.</param>
         /// <param name="json">The formatted json sent in the request. Not altered in the method.</param>
         /// <returns>Returns the HttpResponseMessage from the api.</returns>
-        public void SendRaw(ulong channel, string json)
+        public async Task SendRaw(ulong channel, string json)
         {
             //build and send request
             var content = new StringContent(json, Encoding.UTF8, "application/json");
-            var _response = _client.PostAsync($"https://discord.com/api/channels/{channel}/messages", content);
+            var _response = await _client.PostAsync($"https://discord.com/api/channels/{channel}/messages", content);
 
             //log error codes
-            if (_response.Result.StatusCode.ToString() != "OK") Console.WriteLine(_response.Result.StatusCode);
+            if (_response.StatusCode.ToString() != "OK") Console.WriteLine(_response.StatusCode.ToString());
         }
 
         /// <summary>
@@ -47,7 +47,7 @@ namespace ServerProDiscord
         /// <param name="content">The string it searches through.</param>
         /// <param name="result">The content inside the code block. Null if not found.</param>
         /// <returns>Whether or not it found a code block.</returns>
-        public bool StripCodeBlock(string content, out string result)
+        public static bool StripCodeBlock(string content, out string result)
         {
             result = null;
             Regex codeBlock = new Regex("```[^`]*```", RegexOptions.Multiline);
