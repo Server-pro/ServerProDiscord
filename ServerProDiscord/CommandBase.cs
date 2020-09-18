@@ -18,6 +18,7 @@ namespace ServerProDiscord
     {
         public delegate void InvokeSig(string value);
 
+        private static string _prefix;
         private static readonly List<CommandBase> _commands = new List<CommandBase>();
         private static readonly EmbedBuilder _globalHelpEmbed = new EmbedBuilder();
         private static readonly List<EmbedBuilder> _instanceHelpEmbed = new List<EmbedBuilder>();
@@ -31,9 +32,11 @@ namespace ServerProDiscord
         
 
         #region Init/Callback
-        public static void Init()
+        public static void Init(string prefix)
         {
+            _prefix = prefix;
             _globalHelpEmbed.Title = "Commands";
+
             AddCommand(new Help(_globalHelpEmbed, _instanceHelpEmbed));
             AddCommand(new Ping());
             AddCommand(new SendRaw());
@@ -59,7 +62,7 @@ namespace ServerProDiscord
             _commands.Add(command);
 
             var temp = new EmbedBuilder();
-            temp.Title = ("Command: " + Bot.Instance.Prefix + command._name);
+            temp.Title = ("Command: " + _prefix + command._name);
             temp.Description = command._description;
 
             foreach (var a in command._arguments)
@@ -68,11 +71,11 @@ namespace ServerProDiscord
                 foreach (var n in a.name) aliases += $"{n}, ";
                 temp.AddField($"Argument: {aliases.Substring(0, aliases.Length -2)} {(a.required ? "(Required)" : "(Optional)")} ", a.description);
             }
-            temp.AddField("Example:", $"{Bot.Instance.Prefix}{command._name} {command._example}");
+            temp.AddField("Example:", $"{_prefix}{command._name} {command._example}");
 
             _instanceHelpEmbed.Add(temp);
 
-            _globalHelpEmbed.AddField(Bot.Instance.Prefix + command._name, command._description);
+            _globalHelpEmbed.AddField(_prefix + command._name, command._description);
         }
 
         /// <summary>

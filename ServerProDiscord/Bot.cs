@@ -20,9 +20,11 @@ namespace ServerProDiscord
         }
 
         public DiscordSocketClient _client;
-        private BlackList _blackList;
         public MessageHandler _messageHandler;
 
+        private BlackList _blackList;
+
+        /*
         #region Config Getters
         private IConfiguration Config
         {
@@ -56,26 +58,29 @@ namespace ServerProDiscord
             get => DevEnv ? Config["DevToken"] : Config["Token"];
         }
         #endregion 
+        */
 
         public async Task<Discord.Rest.RestUserMessage> Send(ulong channel, string message = null, bool isTTS = false, Embed embed = null, RequestOptions options = null)
         {
             return await ((SocketTextChannel)_client.GetChannel(channel)).SendMessageAsync(message, isTTS, embed, options);
         }
 
-        private async Task BotCallCommands(SocketMessage sm) => await CommandBase.CallCommands(sm, Prefix);
+        private async Task BotCallCommands(SocketMessage sm) => await CommandBase.CallCommands(sm, Config.Profile.Prefix);
 
         private async Task MainAsync()
         {
+            Config.Init("../../../config.yml");
+            CommandBase.Init(Config.Profile.Prefix);
+
             _client = new DiscordSocketClient();
             _blackList = new BlackList("../../../../blacklist.txt");
-            _messageHandler = new MessageHandler(Token);
-            CommandBase.Init();
+            _messageHandler = new MessageHandler(Config.Token);
 
             _client.Log += Log;
             _client.MessageReceived += _blackList.Check;
             _client.MessageReceived += BotCallCommands;
 
-            await _client.LoginAsync(TokenType.Bot, Token);
+            await _client.LoginAsync(TokenType.Bot, Config.Token);
             await _client.StartAsync();
 
             await Task.Delay(-1);
