@@ -33,7 +33,7 @@ namespace ServerProDiscord
 
         private async Task MainAsync()
         {
-            Config.Init("../../../config.yml");
+            Config.Init();
             CommandBase.Init(Config.Profile.Prefix);
 
             _client = new DiscordSocketClient();
