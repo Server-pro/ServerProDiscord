@@ -26,7 +26,7 @@ namespace ServerProDiscord.Commands
         protected override async Task Run(SocketMessage sm, string msg)
         {
             bool isCodeBlock = MessageHandler.StripCodeBlock(sm.Content, out string content);
-            if (isCodeBlock) await Bot.Instance.Send(channel == 0 ? sm.Channel.Id : channel, content);
+            if (isCodeBlock) await Bot.Instance.SendRaw(channel == 0 ? sm.Channel.Id : channel, content);
             else await Bot.Instance.Send(sm.Channel.Id, "Code block missing.");
         }
 

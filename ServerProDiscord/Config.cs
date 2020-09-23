@@ -30,6 +30,12 @@ namespace ServerProDiscord
             Admins = _map.Admins;
 
             Token = System.IO.File.ReadAllText(tokenPath);
+
+            if (DevEnv)
+            {
+                Console.WriteLine("!!!  In developer mode  !!!");
+                Console.WriteLine("!!! Real bot not online !!!\n");
+            }
         }
 
         public class Map {
