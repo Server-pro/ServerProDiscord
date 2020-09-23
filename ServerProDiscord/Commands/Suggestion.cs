@@ -42,6 +42,6 @@ namespace ServerProDiscord.Commands
             await message.AddReactionAsync(yes);
             await message.AddReactionAsync(no);
         }
-        protected override bool HasPermission(ulong id) => true;
+        protected override bool HasPermission(SocketUser user) => true;
     }
 }

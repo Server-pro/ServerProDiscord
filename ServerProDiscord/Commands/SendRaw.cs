@@ -1,6 +1,8 @@
-﻿using Discord.WebSocket;
+﻿using Discord;
+using Discord.WebSocket;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -30,6 +32,9 @@ namespace ServerProDiscord.Commands
             else await Bot.Instance.Send(sm.Channel.Id, "Code block missing.");
         }
 
-        protected override bool HasPermission(ulong id) => false;
+        protected override bool HasPermission(SocketUser user)
+        {
+            return ((IGuildUser)user).RoleIds.Contains<ulong>(754307100557180958);
+        }
     }
 }

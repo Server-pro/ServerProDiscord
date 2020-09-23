@@ -16,7 +16,7 @@ namespace ServerProDiscord
         private HttpClient _client;
 
         /// <summary>
-        /// Initializes an HttpClient and adds the authorization header.
+        /// Initializes an HttpClient and adds the token into authentication.
         /// </summary>
         /// <param name="token">Provide the bot's token here.</param>
         public MessageHandler(string token)

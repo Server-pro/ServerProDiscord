@@ -171,7 +171,7 @@ namespace ServerProDiscord
             }
 
             CheckArguments();
-            if (!HasPermissionBase(sm.Author.Id)) _code = Code.PermissionDenied;
+            if (!HasPermissionBase(sm.Author)) _code = Code.PermissionDenied;
             await Respond(sm, msg);
         }
 
@@ -252,16 +252,16 @@ namespace ServerProDiscord
             return false;
         }
 
-        private bool HasPermissionBase(ulong id)
+        private bool HasPermissionBase(SocketUser user)
         {
-            if (IsAdmin(id))
+            if (IsAdmin(user.Id))
                 return true;
-            return HasPermission(id);
+            return HasPermission(user);
         }
         #endregion
 
         protected abstract Task Run(SocketMessage sm, string msg);
-        protected abstract bool HasPermission(ulong id);
+        protected abstract bool HasPermission(SocketUser user);
 
 
 
