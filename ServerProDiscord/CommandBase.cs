@@ -35,6 +35,7 @@ namespace ServerProDiscord
             _globalHelpEmbed.Title = "Commands";
 
             AddCommand(new Help(_globalHelpEmbed, _instanceHelpEmbed));
+            AddCommand(new Advertise());
             AddCommand(new Ping());
             AddCommand(new SendRaw());
             AddCommand(new Suggestion());

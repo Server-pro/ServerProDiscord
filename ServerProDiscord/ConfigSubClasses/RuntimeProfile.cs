@@ -9,5 +9,6 @@ namespace ServerProDiscord.ConfigSubClasses
         public string Prefix;
         public ulong RConChannel;
         public ulong SuggestionChannel;
+        public ulong AdChannel;
     }
 }
