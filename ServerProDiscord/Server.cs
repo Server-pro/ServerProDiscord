@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
 using System.Net.Http;
 using System.Text;
 
@@ -21,9 +22,14 @@ namespace ServerProDiscord
             client.DefaultRequestHeaders.Add("sec-fetch-site", "same-origin");
             client.DefaultRequestHeaders.Add("cookie", $"cookie={cookie}");
         }
-        public static Server GetServerFromID(string id)
+
+        public static bool GetServerFromID(string id, out Server server)
         {
             if (!IsInit) Init();
+
+            server = null;
+
+            if (!CheckServerPage(id)) return false;
 
             var body = $"id={id}&v=45";
             var content = new StringContent(body, Encoding.UTF8, "application/x-www-form-urlencoded");
@@ -32,7 +38,17 @@ namespace ServerProDiscord
             JObject jObject = JsonConvert.DeserializeObject<JObject>(response.Result.Content.ReadAsStringAsync().Result);
             jObject.TryGetValue("servers", out JToken jToken);
             ((JObject)jToken).TryGetValue(id, out JToken jserver);
-            return jserver.ToObject<Server>();
+            server = jserver.ToObject<Server>();
+            return true;
+        }
+
+        public static bool CheckServerPage(string id)
+        {
+            var body = $"id={id}";
+            var content = new StringContent(body, Encoding.UTF8, "application/x-www-form-urlencoded");
+            var response = client.PostAsync("https://server.pro/r/serverPage/get", content);
+
+            return response.Result.Content.ReadAsStringAsync().Result != "false";
         }
 
         public Conf Conf;
@@ -71,7 +87,7 @@ namespace ServerProDiscord
         MySql MySql;
         bool PluginsSupported;
         bool SP_AcceptDonations;
-        bool SP_ShowInfo;
+        public bool SP_ShowInfo;
         bool SP_ShowOnline;
         bool SP_ShowRecent;
     }

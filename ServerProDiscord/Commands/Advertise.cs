@@ -28,7 +28,12 @@ namespace ServerProDiscord.Commands
 
         protected override async Task Run(SocketMessage sm, string msg)
         {
-            Server server = Server.GetServerFromID(_id);
+            if (!Server.GetServerFromID(_id, out Server server))
+            {
+                await Bot.Instance.Send(Config.Profile.AdChannel, "Server not found");
+                return;
+            }
+
             Discord.EmbedBuilder eb = new Discord.EmbedBuilder()
                 .WithTitle(server.Name)
                 .AddField("Type", server.Type, true)
