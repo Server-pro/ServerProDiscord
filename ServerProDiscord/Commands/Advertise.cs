@@ -30,7 +30,7 @@ namespace ServerProDiscord.Commands
         {
             if (!Server.GetServerFromID(_id, out Server server))
             {
-                await Bot.Instance.Send(Config.Profile.AdChannel, "Server not found");
+                await Bot.Instance.Send(sm.Channel.Id, "Server not found. Either the server does not exist, or its server page is disabled.");
                 return;
             }
 
@@ -43,6 +43,7 @@ namespace ServerProDiscord.Commands
                 eb.Description = _desc;
 
             await Bot.Instance.Send(Config.Profile.AdChannel, embed: eb.Build());
+            await Bot.Instance.Send(sm.Channel.Id, "Message sent!");
         }
         protected override bool HasPermission(SocketUser user) => false;
     }
