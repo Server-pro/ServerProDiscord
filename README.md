@@ -21,8 +21,13 @@ The bot comes with a number of pre-configured commands, all of which must be pre
 |`suggestion`|-|Formally sends a suggestion to #suggestions.|
 |-|`-t <title>`|Add a brief explanation of the suggestion **(Required)**|
 |-|`-b <body>`|The body portion of the suggestion **(Required)**|
-|`support`|-|Displays info on how to get support.
+|`support`|-|Displays info on how to get support.|
 |-|`-c <channel>`|Specify the channel in which the bot will respond (Optional - will respond in current channel if not specified)|
+|`advertise`|-|Creates an ad for your server in the server ads channel.|
+|-|`-id <serverID>`|The id of your server. This can be found in your url when in your control panel.|
+|-|`-d <description>`|Custom message to add to your advertisement|
+
+
 
 ### Installation
 The commands below are specific to Ubuntu 20.04 LTS. If you are using a different distribution, please modify the process accordingly.
